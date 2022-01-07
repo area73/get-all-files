@@ -113,6 +113,8 @@ function walk(dirnames, filenames, notifier, options) {
   let pendingPromises = 0
 
   for (const dirname of dirnames) {
+    console.log('dirname :: ', dirname)
+
     if (options.isExcludedDir(dirname)) {
       continue
     }
@@ -130,7 +132,8 @@ function walk(dirnames, filenames, notifier, options) {
         const filename = dirname + dirent.name
 
         if (dirent.isDirectory()) {
-          children.push(filename + sep)
+          const hasSeparator = /(\/|\\)$/.test(filename)
+          children.push(hasSeparator ? filename : filename + sep)
         } else {
           filenames.push(filename)
         }
@@ -183,3 +186,31 @@ export const getAllFiles = (filename, options) => {
 
   return files
 }
+
+//////////
+
+const isInList =
+  (...dirs) =>
+  name =>
+    dirs.includes(name)
+
+const ZeroFiles = async () => {
+  const a = await getAllFiles(`./test/fixtures/blah/unreal/`, {
+    isExcludedDir: isInList(
+      `./test/fixtures/blah/unreal/woah/`,
+      `./test/fixtures/blah/unreal/foo/`
+    ),
+  }).toArray()
+
+  console.log('----->', a)
+}
+
+const twoFiles = async () => {
+  const a = await getAllFiles(`./test/fixtures/`, {
+    isExcludedDir: isInList(`./test/fixtures/blah/`),
+  }).toArray()
+
+  console.log('----->', a)
+}
+
+ZeroFiles()
