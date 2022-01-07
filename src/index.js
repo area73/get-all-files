@@ -33,7 +33,7 @@ const normalizeDirname = (dirname, options) => {
     dirname += sep
   }
 
-  return dirname
+  return posix.normalize(dirname)
 }
 
 export const getAllFilesSync = (filename, options) => {
