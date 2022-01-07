@@ -19,6 +19,8 @@ import { sep, resolve, posix } from 'path'
 
 const fa = fs.promises
 
+const normalizeFilename = filename => filename.split(sep).join(posix.sep)
+
 const normalizeOptions = ({
   resolve = false,
   isExcludedDir = () => false,
@@ -33,12 +35,13 @@ const normalizeDirname = (dirname, options) => {
     dirname += sep
   }
 
-  dirname = dirname.split(sep).join(posix.sep)
+  dirname = normalizeFilename(dirname)
 
   return dirname
 }
 
 export const getAllFilesSync = (filename, options) => {
+  filename = normalizeFilename(filename)
   options = normalizeOptions(options)
 
   const files = {
@@ -110,7 +113,7 @@ function walk(dirnames, filenames, notifier, options) {
     notifier.done = true
     return
   } else {
-    dirnames = dirnames.map(fileName => fileName.split(sep).join(posix.sep))
+    dirnames = dirnames.map(fileName => normalizeFilename(fileName))
   }
 
   const children = []
@@ -154,6 +157,7 @@ function walk(dirnames, filenames, notifier, options) {
 }
 
 export const getAllFiles = (filename, options) => {
+  filename = normalizeFilename(filename)
   options = normalizeOptions(options)
   const files = {
     async *[Symbol.asyncIterator]() {

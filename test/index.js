@@ -23,8 +23,12 @@ const fixturesBlahUnreal = `./test/fixtures/blah/unreal/`
 
 const isInList =
   (...dirs) =>
-  name =>
-    dirs.includes(name)
+  name => {
+    console.log(dirs)
+    console.log(name)
+    console.log('----------------')
+    return dirs.includes(name)
+  }
 
 const options = directoryList => ({
   isExcludedDir: isInList(directoryList),
