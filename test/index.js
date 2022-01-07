@@ -31,6 +31,7 @@ const options = directoryList => ({
   isExcludedDir: isInList(directoryList),
 })
 
+/*
 test(`sync finds 8 files`, t => {
   let count = 0
 
@@ -82,8 +83,13 @@ test(`async array finds 2 files, excluding all directories with 2 files in the r
     2
   )
 })
-
+*/
 test(`async array finds 0 files, excluding all directories and no files in the root folder`, async t => {
+  console.log(posix.normalize('./a/b/c'))
+  console.log(posix.normalize('./a/b/c/'))
+  console.log(posix.normalize(`./a/b/c/`))
+  console.log(posix.normalize(`./a\\b/c/`))
+
   t.is(
     (
       await getAllFiles(fixturesBlahUnreal, {
