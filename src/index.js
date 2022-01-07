@@ -15,7 +15,7 @@
  */
 
 import fs from 'fs'
-import { sep, resolve } from 'path'
+import { sep, resolve, posix } from 'path'
 
 const fa = fs.promises
 
@@ -113,6 +113,11 @@ function walk(dirnames, filenames, notifier, options) {
   let pendingPromises = 0
 
   for (const dirname of dirnames) {
+    console.log('dirname :: ', dirname)
+    console.log(
+      'example :: ',
+      posix.normalize('./test/fixtures/blah/unreal/woah/')
+    )
     if (options.isExcludedDir(dirname)) {
       continue
     }
