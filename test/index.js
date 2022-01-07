@@ -87,8 +87,8 @@ test(`async array finds 0 files, excluding all directories and no files in the r
     (
       await getAllFiles(fixturesBlahUnreal, {
         isExcludedDir: isInList(
-          `./test/fixtures/blah/unreal/woah/`,
-          `./test/fixtures/blah/unreal/foo/`
+          path.posix.normalize(`./test/fixtures/blah/unreal/woah/`),
+          path.posix.normalize(`./test/fixtures/blah/unreal/foo/`)
         ),
       }).toArray()
     ).length,
