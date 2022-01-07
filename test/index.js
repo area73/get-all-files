@@ -17,14 +17,15 @@
 import fs from 'fs'
 import test from 'ava'
 import { getAllFiles, getAllFilesSync } from '../src/index.js'
+import { posix } from 'path'
 
-const fixtures = `./test/fixtures/`
-const fixturesBlahUnreal = `./test/fixtures/blah/unreal/`
+const fixtures = posix.normalize('./test/fixtures/')
+const fixturesBlahUnreal = posix.normalize('./test/fixtures/blah/unreal/')
 
 const isInList =
   (...dirs) =>
   name =>
-    dirs.includes(name)
+    dirs.map(posix.normalize).includes(name)
 
 const options = directoryList => ({
   isExcludedDir: isInList(directoryList),
@@ -87,8 +88,8 @@ test(`async array finds 0 files, excluding all directories and no files in the r
     (
       await getAllFiles(fixturesBlahUnreal, {
         isExcludedDir: isInList(
-          path.posix.normalize(`./test/fixtures/blah/unreal/woah/`),
-          path.posix.normalize(`./test/fixtures/blah/unreal/foo/`)
+          './test/fixtures/blah/unreal/woah/',
+          './test/fixtures/blah/unreal/foo/'
         ),
       }).toArray()
     ).length,
