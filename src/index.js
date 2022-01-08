@@ -15,7 +15,7 @@
  */
 
 import fs from 'fs'
-import { sep, resolve, posix } from 'path'
+import { sep, resolve, posix, join } from 'path'
 
 const fa = fs.promises
 
@@ -37,6 +37,7 @@ const normalizeDirname = (dirname, options) => {
 }
 
 export const getAllFilesSync = (filename, options) => {
+  filename = posix.normalize(filename)
   options = normalizeOptions(options)
 
   const files = {
@@ -47,15 +48,16 @@ export const getAllFilesSync = (filename, options) => {
       }
 
       yield* (function* walk(dirname) {
+        dirname = posix.normalize(dirname)
         if (options.isExcludedDir(dirname)) {
           return
         }
 
         for (const dirent of fs.readdirSync(dirname, { withFileTypes: true })) {
-          const filename = dirname + dirent.name
+          const filename = join(dirname, posix.normalize(dirent.name))
 
           if (dirent.isDirectory()) {
-            yield* walk(filename + sep)
+            yield* walk(join(filename, sep))
           } else {
             yield filename
           }
@@ -112,12 +114,8 @@ function walk(dirnames, filenames, notifier, options) {
   const children = []
   let pendingPromises = 0
 
-  for (const dirname of dirnames) {
-    console.log('dirname :: ', dirname)
-    console.log(
-      'example :: ',
-      posix.normalize('./test/fixtures/blah/unreal/woah/')
-    )
+  for (let dirname of dirnames) {
+    dirname = posix.normalize(dirname)
     if (options.isExcludedDir(dirname)) {
       continue
     }
@@ -132,10 +130,10 @@ function walk(dirnames, filenames, notifier, options) {
       }
 
       for (const dirent of dirents) {
-        const filename = dirname + dirent.name
+        const filename = join(dirname, posix.normalize(dirent.name))
 
         if (dirent.isDirectory()) {
-          children.push(filename + sep)
+          children.push(join(filename, sep))
         } else {
           filenames.push(filename)
         }
@@ -155,7 +153,9 @@ function walk(dirnames, filenames, notifier, options) {
 }
 
 export const getAllFiles = (filename, options) => {
+  filename = posix.normalize(filename)
   options = normalizeOptions(options)
+
   const files = {
     async *[Symbol.asyncIterator]() {
       if (!(await fa.lstat(filename)).isDirectory()) {
