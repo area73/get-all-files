@@ -26,6 +26,12 @@ const isInList =
   (...dirs) =>
   name => {
     console.log('isExcludedDir:name :: ', name)
+    console.log('isExcludedDir:dirs[0] :: ', dirs[0])
+    console.log('isExcludedDir:dirs[1] :: ', dirs[1])
+    console.log(
+      'isExcludedDir:posix.normalize(dirs[0]) :: ',
+      posix.normalize(dirs[0])
+    )
     const normalizedDirs = dirs.map(dir => posix.normalize(dir))
 
     console.log('isExcludedDir:normalizedDirs :: ', normalizedDirs)
@@ -94,8 +100,8 @@ test(`async array finds 0 files, excluding all directories and no files in the r
     (
       await getAllFiles(fixturesBlahUnreal, {
         isExcludedDir: isInList(
-          './test/fixtures/blah/unreal/woah/',
-          './test/fixtures/blah/unreal/foo/'
+          'test/fixtures/blah/unreal/woah/',
+          'test/fixtures/blah/unreal/foo/'
         ),
       }).toArray()
     ).length,
