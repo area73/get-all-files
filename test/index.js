@@ -24,8 +24,11 @@ const fixturesBlahUnreal = posix.normalize('./test/fixtures/blah/unreal/')
 
 const isInList =
   (...dirs) =>
-  name =>
-    dirs.map(posix.normalize).includes(name)
+  name => {
+    console.log('isExcludedDir:name :: ', name)
+    console.log('isExcludedDir:dirs :: ', dirs)
+    return dirs.map(posix.normalize).includes(name)
+  }
 
 const options = directoryList => ({
   isExcludedDir: isInList(directoryList),
@@ -85,11 +88,6 @@ test(`async array finds 2 files, excluding all directories with 2 files in the r
 })
 */
 test(`async array finds 0 files, excluding all directories and no files in the root folder`, async t => {
-  console.log(posix.normalize('./a/b/c'))
-  console.log(posix.normalize('./a/b/c/'))
-  console.log(posix.normalize(`./a/b/c/`))
-  console.log(posix.normalize(`./a\\b/c/`))
-
   t.is(
     (
       await getAllFiles(fixturesBlahUnreal, {
