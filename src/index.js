@@ -15,6 +15,7 @@
  */
 
 import fs from 'fs'
+
 import { sep, resolve, posix, join } from 'path'
 
 const fa = fs.promises
@@ -28,7 +29,6 @@ const normalizeDirname = (dirname, options) => {
   if (options.resolve === true) {
     dirname = resolve(dirname)
   }
-
   return posix.normalize(dirname)
 }
 
@@ -103,6 +103,8 @@ function walk(dirnames, filenames, notifier, options) {
   if (dirnames.length === 0) {
     notifier.done = true
     return
+  } else {
+    dirnames = dirnames.map(fileName => fileName.split(sep).join(posix.sep))
   }
 
   const children = []
