@@ -29,12 +29,6 @@ const normalizeDirname = (dirname, options) => {
     dirname = resolve(dirname)
   }
 
-  /*
-  if (dirname.length > 0 && dirname[dirname.length - 1] !== sep) {
-    dirname += sep
-  }
-  */
-
   return posix.normalize(dirname)
 }
 
@@ -74,9 +68,7 @@ export const getAllFilesSync = (filename, options) => {
 
 function createNotifier() {
   let done = false
-  // eslint-disable-next-line no-empty-function
   let resolve = () => {}
-  // eslint-disable-next-line no-empty-function
   let reject = () => {}
   let notified = new Promise((pResolve, pReject) => {
     resolve = pResolve
@@ -117,16 +109,13 @@ function walk(dirnames, filenames, notifier, options) {
   let pendingPromises = 0
 
   for (let dirname of dirnames) {
-    console.log('WALK:dirname :: ', dirname)
     dirname = posix.normalize(dirname)
-    console.log('WALK:dirname : posix.normalize :: ', dirname)
     if (options.isExcludedDir(dirname)) {
       continue
     }
 
     pendingPromises++
-    // console.log('dirname :: ', dirname)
-    // eslint-disable-next-line no-loop-func
+
     fs.readdir(dirname, { withFileTypes: true }, (error, dirents) => {
       if (error != null) {
         notifier.reject(error)
@@ -135,13 +124,11 @@ function walk(dirnames, filenames, notifier, options) {
 
       for (const dirent of dirents) {
         const filename = join(dirname, posix.normalize(dirent.name))
-        // console.log('dirent :: ', dirent)
         if (dirent.isDirectory()) {
           children.push(join(filename, sep))
         } else {
           filenames.push(filename)
         }
-        // console.log('filenames ', filenames)
       }
 
       notifier.resolve()
@@ -160,7 +147,6 @@ function walk(dirnames, filenames, notifier, options) {
 export const getAllFiles = (filename, options) => {
   filename = posix.normalize(filename)
   options = normalizeOptions(options)
-  // console.log('SOURCE:: ', filename)
   const files = {
     async *[Symbol.asyncIterator]() {
       if (!(await fa.lstat(filename)).isDirectory()) {

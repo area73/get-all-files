@@ -68,7 +68,7 @@ test(`async array finds 6 files, excluding a directory`, async t => {
   t.is(
     (
       await getAllFiles(fixtures, {
-        isExcludedDir: isInList(`./test/fixtures/blah/unreal/woah/`),
+        isExcludedDir: isInList(`test/fixtures/blah/unreal/woah/`),
       }).toArray()
     ).length,
     6
@@ -79,7 +79,7 @@ test(`async array finds 2 files, excluding all directories with 2 files in the r
   t.is(
     (
       await getAllFiles(fixtures, {
-        isExcludedDir: isInList(`./test/fixtures/blah/`),
+        isExcludedDir: isInList(`test/fixtures/blah/`),
       }).toArray()
     ).length,
     2
