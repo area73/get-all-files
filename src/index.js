@@ -29,9 +29,11 @@ const normalizeDirname = (dirname, options) => {
     dirname = resolve(dirname)
   }
 
+  /*
   if (dirname.length > 0 && dirname[dirname.length - 1] !== sep) {
     dirname += sep
   }
+  */
 
   return posix.normalize(dirname)
 }
