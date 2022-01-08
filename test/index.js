@@ -26,7 +26,7 @@ const isInList =
   (...dirs) =>
   name => {
     console.log('isExcludedDir:name :: ', name)
-    const normalizedDirs = dirs.map(posix.normalize)
+    const normalizedDirs = dirs.map(dir => posix.normalize(dir))
 
     console.log('isExcludedDir:normalizedDirs :: ', normalizedDirs)
     return normalizedDirs.includes(name)
