@@ -26,7 +26,7 @@ const isInList =
   name => {
     const normalizedDirs = dirs.map(dir => dir.replace(/\\/g, '/'))
     const normalizedName = name.replace(/\\/g, '/')
-    normalizedDirs.includes(normalizedName)
+    return normalizedDirs.includes(normalizedName)
   }
 
 const options = directoryList => ({
