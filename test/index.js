@@ -25,17 +25,9 @@ const fixturesBlahUnreal = posix.normalize('./test/fixtures/blah/unreal/')
 const isInList =
   (...dirs) =>
   name => {
-    console.log('isExcludedDir:name :: ', name)
-    console.log('isExcludedDir:dirs[0] :: ', dirs[0])
-    console.log('isExcludedDir:dirs[1] :: ', dirs[1])
-    console.log(
-      'isExcludedDir:posix.normalize(dirs[0]) :: ',
-      posix.normalize(dirs[0])
-    )
-    const normalizedDirs = dirs.map(dir => posix.normalize(dir))
-
-    console.log('isExcludedDir:normalizedDirs :: ', normalizedDirs)
-    return normalizedDirs.includes(name)
+    const normalizedDirs = dirs.map(dir => dir.replace(/\\/g, '/'))
+    const normalizedName = name.replace(/\\/g, '/')
+    return normalizedDirs.includes(normalizedName)
   }
 
 const options = directoryList => ({
