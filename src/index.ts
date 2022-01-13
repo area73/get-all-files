@@ -18,8 +18,6 @@ const normalizeOptions = (options: OptionsParameters): Required<OptionsParameter
   },
 });
 
-
-
 export const getAllFilesSync = (filename: string, options?: OptionsParameters) => {
   const optionsNormalized = normalizeOptions(options ?? {});
   const files = {
@@ -169,5 +167,5 @@ export const getAllFiles = (filename: string, options?: OptionsParameters) => {
   return files;
 };
 
-// console.log(await getAllFiles('./test/fixtures').toArray());
+// Console.log(await getAllFiles('./test/fixtures').toArray());
 

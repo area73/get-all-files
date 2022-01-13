@@ -1,7 +1,11 @@
 import * as fs from 'node:fs';
 import {getAllFilesSync} from './index';
 
-const isExcludedDir = (excludedPaths: string[]) => (reference: string) => excludedPaths.includes(reference);
+const isExcludedDir = (excludedPaths: string[]) => (reference: string) => {
+  console.log('excludedPaths:', excludedPaths);
+  console.log('reference:', reference);
+  return excludedPaths.includes(reference);
+};
 
 describe('Getting files synchronously', () => {
   describe('when no options are passed', () => {
