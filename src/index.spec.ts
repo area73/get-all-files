@@ -1,14 +1,7 @@
 import * as fs from 'node:fs';
-import { getAllFilesSync } from "./index";
+import {getAllFilesSync} from './index';
 
 const isExcludedDir = (excludedPaths: string[]) => (reference: string) => excludedPaths.includes(reference);
-/*
-Const isExcludedDir = (excludedPaths: string[]) => (reference: string) => {
-  console.log(excludedPaths)
-  console.log(reference)
-  return false;
-}
-*/
 
 describe('Getting files synchronously', () => {
   describe('when no options are passed', () => {
@@ -23,7 +16,9 @@ describe('Getting files synchronously', () => {
       for (const filename of filesSync) {
         // TODO fix as string
         fileExist = fs.existsSync(filename as string);
-        if (!fileExist) {break;}
+        if (!fileExist) {
+          break;
+        }
       }
 
       expect(fileExist).toBe(true);
