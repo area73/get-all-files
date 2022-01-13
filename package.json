@@ -54,7 +54,9 @@
           "allowShortCircuit": true
         }
       ],
-      "@typescript-eslint/no-loop-func": "off"
+      "@typescript-eslint/no-loop-func": "off",
+      "import/extensions": "off",
+      "unicorn/prefer-module": "off"
     }
   },
   "jest": {
