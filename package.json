@@ -56,7 +56,8 @@
       ],
       "@typescript-eslint/no-loop-func": "off",
       "import/extensions": "off",
-      "unicorn/prefer-module": "off"
+      "unicorn/prefer-module": "off",
+      "unicorn/no-array-callback-reference": "off"
     }
   },
   "jest": {
