@@ -1,17 +1,19 @@
 import * as fs from 'node:fs';
 import {getAllFilesSync} from './index';
 
+const normalizeOpSysPath = (path: string) => path.replace('/', '\\');
+
 const isExcludedDir = (excludedPaths: string[]) => (reference: string) => {
   console.log('excludedPaths:', excludedPaths);
   console.log('reference:', reference);
-  return excludedPaths.includes(reference);
+  return excludedPaths.map(normalizeOpSysPath).includes(normalizeOpSysPath(reference));
 };
 
 describe('Getting files synchronously', () => {
   describe('when no options are passed', () => {
     let filesSync: ReturnType <typeof getAllFilesSync>;
     beforeEach(() => {
-      const rootDir = './test/fixtures';
+      const rootDir = 'test/fixtures';
       filesSync = getAllFilesSync(rootDir);
     });
 
@@ -41,7 +43,7 @@ describe('Getting files synchronously', () => {
   describe('when passing an options object', () => {
     it('should find 2 files in root dir, excluding one directory', () => {
       const excludedDirs = isExcludedDir(['test/fixtures/blah/']);
-      const rootDir = './test/fixtures';
+      const rootDir = 'test/fixtures';
       const filesSync = getAllFilesSync(rootDir, {isExcludedDir: excludedDirs});
       expect(filesSync.toArray().length).toBe(2);
     });
@@ -49,14 +51,14 @@ describe('Getting files synchronously', () => {
     it('should find 2 files in root dir, excluding one directory with absolute path passing resolve = true in options object', () => {
       const absolutePath = `${__dirname.slice(0, -4)}/test/fixtures/blah/`;
       const excludedDirs = isExcludedDir([absolutePath]);
-      const rootDir = './test/fixtures';
+      const rootDir = 'test/fixtures';
       const filesSync = getAllFilesSync(rootDir, {resolve: true, isExcludedDir: excludedDirs});
       expect(filesSync.toArray().length).toBe(2);
     });
 
     it('should find 0 files in root dir, excluding one directory', () => {
       const excludedDirs = isExcludedDir(['test/fixtures/blah/sort of real/', 'test/fixtures/blah/unreal/']);
-      const rootDir = './test/fixtures/blah';
+      const rootDir = 'test/fixtures/blah';
       const filesSync = getAllFilesSync(rootDir, {isExcludedDir: excludedDirs});
       expect(filesSync.toArray().length).toBe(0);
     });
