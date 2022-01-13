@@ -1,7 +1,7 @@
 import * as fs from 'node:fs';
 import {getAllFilesSync} from './index';
 
-const normalizeOpSysPath = (path: string) => path.replace('/', '\\').replace(/(\/|\\)$/g, '');
+const normalizeOpSysPath = (path: string) => path.replace('\\', '/').replace(/(\/|\\)$/g, '');
 
 const isExcludedDir = (excludedPaths: string[]) => (reference: string) => {
   console.log('excludedPaths:', excludedPaths.map(normalizeOpSysPath));
