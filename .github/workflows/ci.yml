@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        nodejs: [14, lts]
+        nodejs: [14, latest]
         os: [ubuntu-latest, windows-latest, macOS-latest]
       fail-fast: false
     steps:
