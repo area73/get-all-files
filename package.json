@@ -1,56 +1,80 @@
 {
-  "name": "get-all-files",
-  "version": "4.1.0",
-  "author": {
-    "name": "Tomer Aberbach",
-    "email": "tomeraberbach@gmail.com",
-    "url": "https://tomeraberba.ch"
-  },
-  "description": "A blazing fast recursive directory crawler with lazy sync and async iterator support.",
-  "keywords": [
-    "fs",
-    "recursive",
-    "readdir",
-    "path",
-    "directory",
-    "files",
-    "lazy",
-    "async",
-    "iterator",
-    "iterable"
-  ],
-  "homepage": "https://github.com/TomerAberbach/get-all-files",
-  "repository": "TomerAberbach/get-all-files",
-  "bugs": {
-    "url": "https://github.com/TomerAberbach/get-all-files/issues"
-  },
-  "license": "MIT",
-  "files": [
-    "dist",
-    "src/index.d.ts"
-  ],
-  "type": "module",
-  "engines": {
-    "node": ">= 12.17"
-  },
-  "exports": {
-    "import": "./dist/index.js",
-    "require": "./dist/index.cjs"
-  },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./src/index.d.ts",
+  "name": "get-all-files-ts",
+  "version": "1.0.0",
+  "description": "This is a get-all-files verison writed in TS",
+  "main": "index.js",
   "scripts": {
-    "prepare": "tomer install",
-    "lint": "tomer lint -g",
-    "test": "tomer test",
-    "build": "tomer build -f \"esm,cjs\" src/index.js",
-    "prepublishOnly": "pnpm run build"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "dev": "NODE_OPTIONS='--no-warnings --loader ts-node/esm' nodemon --config nodemon.json src/index.ts",
+    "dev:debug": "nodemon --config nodemon.json --inspect-brk src/index.ts",
+    "lint:fix": "xo --fix"
   },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/area73/get-all-files-ts.git"
+  },
+  "keywords": [
+    "node",
+    "typescript",
+    "file",
+    "handlers",
+    "readers",
+    "recursive"
+  ],
+  "author": "Rodrigo Erades <rerades@siete3.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/area73/get-all-files-ts/issues"
+  },
+  "homepage": "https://github.com/area73/get-all-files-ts#readme",
   "devDependencies": {
-    "ava": "3.15.0",
-    "c8": "7.9.0",
-    "tomer": "0.0.17",
-    "tsd": "0.17.0"
+    "@babel/core": "^7.16.7",
+    "@babel/preset-env": "^7.16.8",
+    "@babel/preset-typescript": "^7.16.7",
+    "@types/jest": "^27.4.0",
+    "@types/node": "^17.0.8",
+    "babel-jest": "^27.4.6",
+    "eslint": "^7.32.0",
+    "jest": "^27.4.7",
+    "nodemon": "^2.0.15",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.4",
+    "xo": "^0.47.0"
+  },
+  "xo": {
+    "space": true,
+    "rules": {
+      "no-param-reassign": "error",
+      "unicorn/no-array-reduce": "off",
+      "@typescript-eslint/no-unused-expressions": [
+        "error",
+        {
+          "allowShortCircuit": true
+        }
+      ],
+      "@typescript-eslint/no-loop-func": "off"
+    }
+  },
+  "jest": {
+    "clearMocks": true,
+    "coverageProvider": "v8",
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
+    }
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ],
+      "@babel/preset-typescript"
+    ]
   }
 }
