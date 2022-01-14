@@ -9,10 +9,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # nodejs: [14, 16]
-        # os: [ubuntu-latest, windows-latest, macOS-latest]
-        nodejs: [16]
-        os: [windows-latest]
+        nodejs: [14, 16]
+        os: [ubuntu-latest, windows-latest, macOS-latest]
       fail-fast: false
     steps:
       - uses: actions/checkout@v2

@@ -57,7 +57,8 @@
       "@typescript-eslint/no-loop-func": "off",
       "import/extensions": "off",
       "unicorn/prefer-module": "off",
-      "unicorn/no-array-callback-reference": "off"
+      "unicorn/no-array-callback-reference": "off",
+      "capitalized-comments": "off"
     }
   },
   "jest": {
