@@ -18,6 +18,23 @@ const normalizeOptions = (options: OptionsParameters): Required<OptionsParameter
   },
 });
 
+const syncWalk = function * (dirname: string, options: OptionsParameters): Generator {
+  if (options.isExcludedDir?.(dirname)) {
+    return;
+  }
+
+  const direntList = fs.readdirSync(dirname, {withFileTypes: true});
+  for (const dirent of direntList) {
+    const filename = join(dirname, posix.normalize(dirent.name));
+
+    if (dirent.isDirectory()) {
+      yield * syncWalk(join(filename, sep), options);
+    } else {
+      yield filename;
+    }
+  }
+};
+
 export const getAllFilesSync = (filename: string, options?: OptionsParameters) => {
   const optionsNormalized = normalizeOptions(options ?? {});
   const files = {
@@ -27,21 +44,7 @@ export const getAllFilesSync = (filename: string, options?: OptionsParameters) =
         return;
       }
 
-      yield * (function * syncWalk(dirname): Generator {
-        if (optionsNormalized.isExcludedDir(dirname)) {
-          return;
-        }
-
-        for (const dirent of fs.readdirSync(dirname, {withFileTypes: true})) {
-          const filename = join(dirname, posix.normalize(dirent.name));
-
-          if (dirent.isDirectory()) {
-            yield * syncWalk(join(filename, sep));
-          } else {
-            yield filename;
-          }
-        }
-      })(normalizeDirname(filename, optionsNormalized.resolve));
+      yield * (syncWalk)(normalizeDirname(filename, optionsNormalized.resolve), optionsNormalized);
     },
     toArray: () => [...files] as string[],
   };
@@ -156,7 +159,6 @@ export const getAllFiles = (filename: string, options?: OptionsParameters) => {
     },
     toArray: async () => {
       const filenames = [];
-
       for await (const filename of files) {
         filenames.push(filename);
       }
@@ -167,5 +169,5 @@ export const getAllFiles = (filename: string, options?: OptionsParameters) => {
   return files;
 };
 
-// Console.log(await getAllFiles('./test/fixtures').toArray());
+// console.log(await getAllFiles('./test/fixtures').toArray());
 
