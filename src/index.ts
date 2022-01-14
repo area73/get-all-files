@@ -4,25 +4,38 @@ import {sep, resolve, posix, join} from 'node:path';
 
 import * as fa from 'node:fs/promises';
 
-interface OptionsParameters {
+export interface OptionsParameters {
+  /**
+   * An array of excluded dirs. Similar to `isExcludedDir` but without the hassle fo creating a
+   * predicate. Just give it a list of dirs to be excluded.
+   */
   excludedDirs?: string[];
-  isExcludedDir?: (dir: string) => boolean;
+  /**
+   * A predicate that determines whether the directory with the given `dirname`
+   * should be crawled.
+   *
+   * There is no `isExcludedFile` option because you can exclude
+   * files by checking conditions while lazily iterating using`getAllFiles.sync` or
+   * `getAllFiles.async`
+   * */
+  isExcludedDir?: (dirname: string) => boolean;
+  /**
+   * Whether to resolve paths to absolute paths (relative to `process.cwd()`).
+   */
   resolve?: boolean;
 }
 
 /**
- * @private
  *
  * @description a function to replace window's path separator to unix like separator '/'
  * and also remove ending separator to standardized path.
  *
- * @param {string} path a string path like to normalize
+ * @param path a string path like to normalize
  * @returns normalized path (unix style)
  */
 const normalizeOpSysPath = (path: string) => path.replace(/\\/g, '/').replace(/(\/|\\)$/g, '');
 
 /**
- * @private
  *
  * @description Helper function to check wether a given list of filepaths are included in
  * searching directory
@@ -43,7 +56,6 @@ const isDirInList = (excludedPaths: string[] | undefined, reference: string) =>
     : false;
 
 /**
- * @private
  *
  * @description helper function to return absolute or relative filename
  * @param filename
@@ -54,12 +66,11 @@ const isDirInList = (excludedPaths: string[] | undefined, reference: string) =>
 const normalizeDirname = (filename: string, useAbsoluteRute?: boolean) => useAbsoluteRute ? resolve(filename) : filename;
 
 /**
- * @private
  *
  * @description helper function to determine if a dirname is skip or not according to options
  * @param dirname
  * @param options
- * @returns {boolean} true if found as excluded
+ * @returns true if found as excluded
  */
 const isExcluded = (dirname: string, options?: OptionsParameters) => {
   if (options?.isExcludedDir?.(dirname)) {
@@ -74,7 +85,6 @@ const isExcluded = (dirname: string, options?: OptionsParameters) => {
 };
 
 /**
- * @private
  *
  * @description traverse function to walk through all file directories
  * @param dirname root dirname to look
@@ -103,7 +113,6 @@ const noop = function (_parameter: unknown) {
 };
 
 /**
- * @private
  *
  * @description a notifier will keep track of each async call made to read a dir and will act as a
  * global promise
@@ -144,7 +153,6 @@ const notifier = () => {
 };
 
 /**
- * @private
  *
  * @description traverse function to walk through all file directories
  * @param dirnames
@@ -194,12 +202,32 @@ function traverse(dirnames: string[], filenames: string[], globalNotifier: Retur
 }
 
 /**
- * @public
+ * Returns a lazy
+ * [iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#The_iterable_protocol)
+ * /
+ * [iterator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#The_iterator_protocol)
+ * that iterates over the file paths recursively found at `path` in no particular order.
  *
- * @description synchronous function to get all file names from a given entry point
- * @param {string} filename entry point path to look for files
- * @param {OptionsParameters} options wether to use absolute or relative paths and excluded dirs
- * @returns {Iterator} an Iterator with a .toString() helper function to return a list of filenames
+ * Calling `toArray` on the returned value returns an array of the file paths.
+ *
+ * @example
+ *
+ * ```js
+ * import { getAllFilesSync } from 'get-all-files'
+ *    // Lazily iterate over filenames synchronously
+ *    for (const filename of getAllFilesSync(`path/to/dir/or/file`)) {
+ *      // Could break early on some condition and get-all-files
+ *    // won't have unnecessarily accumulated the filenames in an array
+ *    console.log(filename)
+ *    }
+ *
+ *    // Get array of filenames synchronously
+ *    console.log(getAllFilesSync(`path/to/dir/or/file`).toArray());
+ * ```
+ *
+ * @param filename entry point path to look for files
+ * @param options wether to use absolute or relative paths and excluded dirs
+ * @returns an Iterator with a .toString() helper function to return a list of filenames
  */
 export const getAllFilesSync = (filename: string, options?: OptionsParameters) => {
   const files = {
@@ -218,13 +246,33 @@ export const getAllFilesSync = (filename: string, options?: OptionsParameters) =
 };
 
 /**
- * @public
+ * Returns a lazy
+ * [async iterable/iterator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/asyncIterator)
+ * that asynchronously iterates over the file paths recursively found at `path` in
+ * no particular order.
  *
- * @async
- * @description asynchronous function to get all file names from a given entry point
- * @param {string} filename entry point path to look for files
- * @param {OptionsParameters} options wether to use absolute or relative paths and excluded dirs
- * @returns {Iterator} an Iterator with a .toString() helper function to return a list of filenames
+ * Calling `toArray` on the returned value returns a promise that resolves to an
+ * array of the file paths.
+ *
+ * @example
+ * ```js
+ *  import { getAllFiles } from 'get-all-files';
+ *
+ *    // Lazily iterate over filenames asynchronously
+ *    for await (const filename of getAllFiles(`path/to/dir/or/file`)) {
+ *      // Could break early on some condition and get-all-files
+ *      // won't have unnecessarily accumulated the filenames in an array
+ *      console.log(filename)
+ *    }
+ *
+ *    // Get array of filenames asynchronously
+ *    console.log(await getAllFiles(`path/to/dir/or/file`).toArray())
+ * ```
+ * @async Iterable / Iterator
+ *
+ * @param filename entry point path to look for files
+ * @param options wether to use absolute or relative paths and excluded dirs
+ * @returns  an Iterator with a .toString() helper function to return a list of filenames
  */
 export const getAllFiles = (filename: string, options?: OptionsParameters) => {
   const files = {

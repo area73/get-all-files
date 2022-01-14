@@ -9,7 +9,7 @@
   "description": "A TypeScript blazing fast recursive directory crawler with lazy sync and async iterator support, fork from  get-all-files by @TomerAberbach",
   "main": "index.js",
   "scripts": {
-    "doc": "jsdoc2md ./dist/index.js > documentation.md",
+    "generate:docs": "typedoc",
     "test": "jest",
     "test:watch": "jest --watch",
     "dev": "NODE_OPTIONS='--no-warnings --loader ts-node/esm' nodemon --config nodemon.json src/index.ts",
@@ -60,9 +60,9 @@
     "babel-jest": "^27.4.6",
     "eslint": "^7.32.0",
     "jest": "^27.4.7",
-    "jsdoc-to-markdown": "7.1.0",
     "nodemon": "^2.0.15",
     "ts-node": "^10.4.0",
+    "typedoc": "0.22.10",
     "typescript": "^4.5.4",
     "xo": "^0.47.0"
   },
