@@ -5,21 +5,28 @@ import {sep, resolve, posix, join} from 'node:path';
 import * as fa from 'node:fs/promises';
 
 interface OptionsParameters {
+  excludedDirs?: string[];
   isExcludedDir?: (dir: string) => boolean;
   resolve?: boolean;
 }
 
+const normalizeOpSysPath = (path: string) => path.replace(/\\/g, '/').replace(/(\/|\\)$/g, '');
+
+const isDirInList = (excludedPaths: string[] | undefined, reference: string) =>
+  excludedPaths
+    ? excludedPaths
+      .map(normalizeOpSysPath)
+      .includes(normalizeOpSysPath(reference))
+    : false;
+
 const normalizeDirname = (filename: string, useAbsoluteRute?: boolean) => useAbsoluteRute ? resolve(filename) : filename;
 
-const normalizeOptions = (options: OptionsParameters): Required<OptionsParameters> => ({
-  resolve: options.resolve ?? false,
-  isExcludedDir: options.isExcludedDir ?? function (_dir: string) {
-    return false;
-  },
-});
+const traverseSync = function * (dirname: string, options?: OptionsParameters): Generator {
+  if (options?.isExcludedDir?.(dirname)) {
+    return;
+  }
 
-const traverseSync = function * (dirname: string, options: OptionsParameters): Generator {
-  if (options.isExcludedDir?.(dirname)) {
+  if (isDirInList(options?.excludedDirs, dirname)) {
     return;
   }
 
@@ -36,7 +43,6 @@ const traverseSync = function * (dirname: string, options: OptionsParameters): G
 };
 
 export const getAllFilesSync = (filename: string, options?: OptionsParameters) => {
-  const optionsNormalized = normalizeOptions(options ?? {});
   const files = {
     * [Symbol.iterator]() {
       if (!fs.lstatSync(filename).isDirectory()) {
@@ -44,7 +50,7 @@ export const getAllFilesSync = (filename: string, options?: OptionsParameters) =
         return;
       }
 
-      yield * (traverseSync)(normalizeDirname(filename, optionsNormalized.resolve), optionsNormalized);
+      yield * (traverseSync)(normalizeDirname(filename, options?.resolve), options);
     },
     toArray: () => [...files] as string[],
   };
