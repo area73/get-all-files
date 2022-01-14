@@ -9,7 +9,7 @@ interface OptionsParameters {
   resolve?: boolean;
 }
 
-const normalizeDirname = (filename: string, useAbsoluteRute: boolean) => useAbsoluteRute ? resolve(filename) : filename;
+const normalizeDirname = (filename: string, useAbsoluteRute?: boolean) => useAbsoluteRute ? resolve(filename) : filename;
 
 const normalizeOptions = (options: OptionsParameters): Required<OptionsParameters> => ({
   resolve: options.resolve ?? false,
@@ -18,7 +18,7 @@ const normalizeOptions = (options: OptionsParameters): Required<OptionsParameter
   },
 });
 
-const syncWalk = function * (dirname: string, options: OptionsParameters): Generator {
+const traverseSync = function * (dirname: string, options: OptionsParameters): Generator {
   if (options.isExcludedDir?.(dirname)) {
     return;
   }
@@ -28,7 +28,7 @@ const syncWalk = function * (dirname: string, options: OptionsParameters): Gener
     const filename = join(dirname, posix.normalize(dirent.name));
 
     if (dirent.isDirectory()) {
-      yield * syncWalk(join(filename, sep), options);
+      yield * traverseSync(join(filename, sep), options);
     } else {
       yield filename;
     }
@@ -44,7 +44,7 @@ export const getAllFilesSync = (filename: string, options?: OptionsParameters) =
         return;
       }
 
-      yield * (syncWalk)(normalizeDirname(filename, optionsNormalized.resolve), optionsNormalized);
+      yield * (traverseSync)(normalizeDirname(filename, optionsNormalized.resolve), optionsNormalized);
     },
     toArray: () => [...files] as string[],
   };
@@ -56,7 +56,7 @@ const noop = function (_parameter: unknown) {
   // Do nothing;
 };
 
-const createNotifier = () => {
+const notifier = () => {
   let done = false;
   let resolve = noop;
   let reject = noop;
@@ -90,51 +90,47 @@ const createNotifier = () => {
   };
 };
 
-function walk(dirnames: string[], filenames: string[], notifier: ReturnType<typeof createNotifier>, options: OptionsParameters) {
+function traverse(dirnames: string[], filenames: string[], globalNotifier: ReturnType<typeof notifier>, options?: OptionsParameters) {
   if (dirnames.length === 0) {
-    notifier.done = true;
+    globalNotifier.done = true;
     return;
   }
 
-  const dirnamesNormalized = dirnames.map(fileName => fileName.split(sep).join(posix.sep));
   const children: string[] = [];
   let pendingPromises = 0;
-  for (const dirname of dirnamesNormalized) {
-    if (options.isExcludedDir?.(dirname)) {
+  for (const dirname of dirnames) {
+    if (options?.isExcludedDir?.(dirname)) {
       continue;
     }
 
     pendingPromises++;
-    // TODO change for promise or async
     fs.readdir(dirname, {withFileTypes: true}, (error, dirents) => {
-      error && notifier.reject(error);
+      error && globalNotifier.reject(error);
 
       for (const dirent of dirents) {
-        const filename = join(dirname, posix.normalize(dirent.name));
+        const filename = join(dirname, dirent.name);
 
         if (dirent.isDirectory()) {
-          children.push(join(filename, sep));
+          children.push(filename);
         } else {
           filenames.push(filename);
         }
       }
 
-      notifier.resolve();
+      globalNotifier.resolve();
 
       if (--pendingPromises === 0) {
-        walk(children, filenames, notifier, options);
+        traverse(children, filenames, globalNotifier, options);
       }
     });
   }
 
   if (pendingPromises === 0) {
-    notifier.done = true;
+    globalNotifier.done = true;
   }
 }
 
 export const getAllFiles = (filename: string, options?: OptionsParameters) => {
-  const optionsNormalized = normalizeOptions(options ?? {});
-
   const files = {
     async * [Symbol.asyncIterator]() {
       const {isDirectory} = await fa.lstat(filename);
@@ -144,18 +140,17 @@ export const getAllFiles = (filename: string, options?: OptionsParameters) => {
       }
 
       const filenames: string[] = [];
-      const notifier = createNotifier();
+      const globalNotifier = notifier();
 
-      walk([normalizeDirname(filename, optionsNormalized.resolve)], filenames, notifier, optionsNormalized);
+      traverse([normalizeDirname(filename, options?.resolve)], filenames, globalNotifier, options);
 
       do {
-        // TODO
         // eslint-disable-next-line no-await-in-loop
-        await notifier.onResolved();
+        await globalNotifier.onResolved();
         while (filenames.length > 0) {
           yield filenames.pop();
         }
-      } while (!notifier.done);
+      } while (!globalNotifier.done);
     },
     toArray: async () => {
       const filenames = [];
@@ -168,6 +163,4 @@ export const getAllFiles = (filename: string, options?: OptionsParameters) => {
   };
   return files;
 };
-
-// console.log(await getAllFiles('./test/fixtures').toArray());
 
