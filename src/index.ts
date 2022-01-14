@@ -10,23 +10,69 @@ interface OptionsParameters {
   resolve?: boolean;
 }
 
+/**
+ * @description a function to replace window's path separator to unix like separator '/'
+ * and also remove ending separator to standardized path.
+ *
+ * @param path a string path like to normalize
+ * @returns normalized path (unix style)
+ */
 const normalizeOpSysPath = (path: string) => path.replace(/\\/g, '/').replace(/(\/|\\)$/g, '');
 
+/**
+ * @description Helper function to check wether a given list of filepaths are included in
+ * searching directory
+ *
+ * @param excludedPaths list of directories to be excluded
+ * @param reference root reference of searching directory
+ * @returns boolean
+ */
 const isDirInList = (excludedPaths: string[] | undefined, reference: string) =>
   excludedPaths
     ? excludedPaths
       .map(normalizeOpSysPath)
+      .map((s: string) => {
+        console.log(normalizeOpSysPath(reference) === s, normalizeOpSysPath(reference), '/', s);
+        return s;
+      })
       .includes(normalizeOpSysPath(reference))
     : false;
 
+/**
+ * @description helper function to return absolute or relative filename
+ * @param filename
+ * @param useAbsoluteRute
+ * @returns a normalized filename, if useAbsoluteRoute it will return an absolute filename otherwise
+ *  it will return filename unmodify
+ */
 const normalizeDirname = (filename: string, useAbsoluteRute?: boolean) => useAbsoluteRute ? resolve(filename) : filename;
 
-const traverseSync = function * (dirname: string, options?: OptionsParameters): Generator {
+/**
+ * @description helper function to determine if a dirname is skip or not according to options
+ * @param dirname
+ * @param options
+ * @returns {boolean} true if found as excluded
+ */
+const isExcluded = (dirname: string, options?: OptionsParameters) => {
   if (options?.isExcludedDir?.(dirname)) {
-    return;
+    return true;
   }
 
   if (isDirInList(options?.excludedDirs, dirname)) {
+    return true;
+  }
+
+  return false;
+};
+
+/**
+ * @description traverse function to walk through all file directories
+ * @param dirname root dirname to look
+ * @param options  <OptionsParameters>
+ * @returns Generator
+ */
+const traverseSync = function * (dirname: string, options?: OptionsParameters): Generator {
+  if (isExcluded(dirname, options)) {
     return;
   }
 
@@ -42,26 +88,15 @@ const traverseSync = function * (dirname: string, options?: OptionsParameters): 
   }
 };
 
-export const getAllFilesSync = (filename: string, options?: OptionsParameters) => {
-  const files = {
-    * [Symbol.iterator]() {
-      if (!fs.lstatSync(filename).isDirectory()) {
-        yield filename;
-        return;
-      }
-
-      yield * (traverseSync)(normalizeDirname(filename, options?.resolve), options);
-    },
-    toArray: () => [...files] as string[],
-  };
-
-  return files;
-};
-
 const noop = function (_parameter: unknown) {
   // Do nothing;
 };
 
+/**
+ * @description a notifier will keep track of each async call made to read a dir and will act as a
+ * global promise
+ * @returns notifier
+ */
 const notifier = () => {
   let done = false;
   let resolve = noop;
@@ -96,6 +131,14 @@ const notifier = () => {
   };
 };
 
+/**
+ * @description traverse function to walk through all file directories
+ * @param dirnames
+ * @param filenames
+ * @param globalNotifier
+ * @param options {OptionsParameters}
+ * @returns void
+ */
 function traverse(dirnames: string[], filenames: string[], globalNotifier: ReturnType<typeof notifier>, options?: OptionsParameters) {
   if (dirnames.length === 0) {
     globalNotifier.done = true;
@@ -105,7 +148,7 @@ function traverse(dirnames: string[], filenames: string[], globalNotifier: Retur
   const children: string[] = [];
   let pendingPromises = 0;
   for (const dirname of dirnames) {
-    if (options?.isExcludedDir?.(dirname)) {
+    if (isExcluded(dirname, options)) {
       continue;
     }
 
@@ -136,6 +179,34 @@ function traverse(dirnames: string[], filenames: string[], globalNotifier: Retur
   }
 }
 
+/**
+ * @description syncronous function to get all file names from a given entry point
+ * @param filename entry point path to look for files
+ * @param options wether to use absolute or relative paths and excluded dirs
+ * @returns an Iterator with a .toString() helper function to return a list of filenames
+ */
+export const getAllFilesSync = (filename: string, options?: OptionsParameters) => {
+  const files = {
+    * [Symbol.iterator]() {
+      if (!fs.lstatSync(filename).isDirectory()) {
+        yield filename;
+        return;
+      }
+
+      yield * (traverseSync)(normalizeDirname(filename, options?.resolve), options);
+    },
+    toArray: () => [...files] as string[],
+  };
+
+  return files;
+};
+
+/**
+ * @description asyncronous function to get all file names from a given entry point
+ * @param filename entry point path to look for files
+ * @param options wether to use absolute or relative paths and excluded dirs
+ * @returns an Iterator with a .toString() helper function to return a list of filenames
+ */
 export const getAllFiles = (filename: string, options?: OptionsParameters) => {
   const files = {
     async * [Symbol.asyncIterator]() {

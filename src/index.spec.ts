@@ -40,7 +40,7 @@ describe('Getting files synchronously', () => {
     });
   });
 
-  describe('when passing an options object', () => {
+  describe('when passing an options object with a "isExcludedDir" function option', () => {
     it('should find 2 files in root dir, excluding one directory', () => {
       const excludedDirs = isExcludedDir(['test/fixtures/blah/']);
       const rootDir = 'test/fixtures';
@@ -56,10 +56,34 @@ describe('Getting files synchronously', () => {
       expect(filesSync.toArray().length).toBe(2);
     });
 
-    it('should find 0 files in root dir, excluding one directory', () => {
+    it('should find 0 files in root dir, excluding two directories', () => {
       const excludedDirs = isExcludedDir(['test/fixtures/blah/sort of real/', 'test/fixtures/blah/unreal/']);
       const rootDir = 'test/fixtures/blah';
       const filesSync = getAllFilesSync(rootDir, {isExcludedDir: excludedDirs});
+      expect(filesSync.toArray().length).toBe(0);
+    });
+  });
+
+  describe('when passing an options object with "excludedDirs" option', () => {
+    it('should find 2 files in root dir', () => {
+      const excludedDirs = ['test/fixtures/blah/'];
+      const rootDir = 'test/fixtures';
+      const filesSync = getAllFilesSync(rootDir, {excludedDirs});
+      expect(filesSync.toArray().length).toBe(2);
+    });
+
+    it('should find 2 files in root dir, excluding one directory with absolute path passing resolve = true in options object', () => {
+      const absolutePath = `${__dirname.slice(0, -4)}/test/fixtures/blah/`;
+      const excludedDirs = [absolutePath];
+      const rootDir = 'test/fixtures';
+      const filesSync = getAllFilesSync(rootDir, {resolve: true, excludedDirs});
+      expect(filesSync.toArray().length).toBe(2);
+    });
+
+    it('should find 0 files in root dir, excluding one directory', () => {
+      const excludedDirs = ['test/fixtures/blah/sort of real/', 'test/fixtures/blah/unreal/'];
+      const rootDir = 'test/fixtures/blah';
+      const filesSync = getAllFilesSync(rootDir, {excludedDirs});
       expect(filesSync.toArray().length).toBe(0);
     });
   });
@@ -93,7 +117,7 @@ describe('Getting files asynchronously', () => {
     });
   });
 
-  describe('when passing an options object', () => {
+  describe('when passing an options object with a "isExcludedDir" function option', () => {
     it('should find 2 files in root dir, excluding one directory with absolute path passing resolve = true in options object', async () => {
       const excludedDirs = isExcludedDir(['test/fixtures/blah/']);
       const rootDir = 'test/fixtures';
@@ -104,6 +128,21 @@ describe('Getting files asynchronously', () => {
       const excludedDirs = isExcludedDir(['test/fixtures/blah/sort of real/', 'test/fixtures/blah/unreal/']);
       const rootDir = 'test/fixtures/blah';
       const filesAsyncArray = await getAllFiles(rootDir, {isExcludedDir: excludedDirs}).toArray();
+      expect(filesAsyncArray.length).toBe(0);
+    });
+  });
+
+  describe('when passing an options object with "excludedDirs" option', () => {
+    it('should find 2 files in root dir, excluding one directory with absolute path passing resolve = true in options object', async () => {
+      const excludedDirs = ['test/fixtures/blah/'];
+      const rootDir = 'test/fixtures';
+      const filesAsyncArray = await getAllFiles(rootDir, {excludedDirs}).toArray();
+      expect(filesAsyncArray.length).toBe(2);
+    });
+    it('should find 0 files in root dir, excluding one directory', async () => {
+      const excludedDirs = ['test/fixtures/blah/sort of real/', 'test/fixtures/blah/unreal/'];
+      const rootDir = 'test/fixtures/blah';
+      const filesAsyncArray = await getAllFiles(rootDir, {excludedDirs}).toArray();
       expect(filesAsyncArray.length).toBe(0);
     });
   });
