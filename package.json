@@ -1,7 +1,12 @@
 {
   "name": "get-all-files-ts",
   "version": "1.0.0",
-  "description": "This is a get-all-files verison writed in TS",
+  "author": {
+    "name": "Rodrigo Erades",
+    "email": "rerades@siete3.com",
+    "url": "http://siete3.com"
+  },
+  "description": "A TypeScript blazing fast recursive directory crawler with lazy sync and async iterator support, fork from  get-all-files by @TomerAberbach",
   "main": "index.js",
   "scripts": {
     "test": "jest",
@@ -11,19 +16,35 @@
     "lint:fix": "xo --fix"
   },
   "type": "module",
+  "engines": {
+    "node": ">=12.17.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/area73/get-all-files-ts.git"
   },
+  "files": [
+    "dist"
+  ],
   "keywords": [
+    "fs",
+    "recursive",
+    "readdir",
+    "path",
+    "directory",
+    "files",
+    "lazy",
+    "async",
+    "iterator",
+    "iterable",
     "node",
+    "ESM",
+    "generator",
     "typescript",
     "file",
     "handlers",
-    "readers",
-    "recursive"
+    "readers"
   ],
-  "author": "Rodrigo Erades <rerades@siete3.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/area73/get-all-files-ts/issues"
