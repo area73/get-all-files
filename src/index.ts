@@ -11,15 +11,19 @@ interface OptionsParameters {
 }
 
 /**
+ * @private
+ *
  * @description a function to replace window's path separator to unix like separator '/'
  * and also remove ending separator to standardized path.
  *
- * @param path a string path like to normalize
+ * @param {string} path a string path like to normalize
  * @returns normalized path (unix style)
  */
 const normalizeOpSysPath = (path: string) => path.replace(/\\/g, '/').replace(/(\/|\\)$/g, '');
 
 /**
+ * @private
+ *
  * @description Helper function to check wether a given list of filepaths are included in
  * searching directory
  *
@@ -39,6 +43,8 @@ const isDirInList = (excludedPaths: string[] | undefined, reference: string) =>
     : false;
 
 /**
+ * @private
+ *
  * @description helper function to return absolute or relative filename
  * @param filename
  * @param useAbsoluteRute
@@ -48,6 +54,8 @@ const isDirInList = (excludedPaths: string[] | undefined, reference: string) =>
 const normalizeDirname = (filename: string, useAbsoluteRute?: boolean) => useAbsoluteRute ? resolve(filename) : filename;
 
 /**
+ * @private
+ *
  * @description helper function to determine if a dirname is skip or not according to options
  * @param dirname
  * @param options
@@ -66,6 +74,8 @@ const isExcluded = (dirname: string, options?: OptionsParameters) => {
 };
 
 /**
+ * @private
+ *
  * @description traverse function to walk through all file directories
  * @param dirname root dirname to look
  * @param options  <OptionsParameters>
@@ -93,6 +103,8 @@ const noop = function (_parameter: unknown) {
 };
 
 /**
+ * @private
+ *
  * @description a notifier will keep track of each async call made to read a dir and will act as a
  * global promise
  * @returns notifier
@@ -132,6 +144,8 @@ const notifier = () => {
 };
 
 /**
+ * @private
+ *
  * @description traverse function to walk through all file directories
  * @param dirnames
  * @param filenames
@@ -180,10 +194,12 @@ function traverse(dirnames: string[], filenames: string[], globalNotifier: Retur
 }
 
 /**
- * @description syncronous function to get all file names from a given entry point
- * @param filename entry point path to look for files
- * @param options wether to use absolute or relative paths and excluded dirs
- * @returns an Iterator with a .toString() helper function to return a list of filenames
+ * @public
+ *
+ * @description synchronous function to get all file names from a given entry point
+ * @param {string} filename entry point path to look for files
+ * @param {OptionsParameters} options wether to use absolute or relative paths and excluded dirs
+ * @returns {Iterator} an Iterator with a .toString() helper function to return a list of filenames
  */
 export const getAllFilesSync = (filename: string, options?: OptionsParameters) => {
   const files = {
@@ -202,10 +218,13 @@ export const getAllFilesSync = (filename: string, options?: OptionsParameters) =
 };
 
 /**
- * @description asyncronous function to get all file names from a given entry point
- * @param filename entry point path to look for files
- * @param options wether to use absolute or relative paths and excluded dirs
- * @returns an Iterator with a .toString() helper function to return a list of filenames
+ * @public
+ *
+ * @async
+ * @description asynchronous function to get all file names from a given entry point
+ * @param {string} filename entry point path to look for files
+ * @param {OptionsParameters} options wether to use absolute or relative paths and excluded dirs
+ * @returns {Iterator} an Iterator with a .toString() helper function to return a list of filenames
  */
 export const getAllFiles = (filename: string, options?: OptionsParameters) => {
   const files = {
