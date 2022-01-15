@@ -3,14 +3,14 @@
 </h1>
 
 <div align="center">
-  <a href="https://npmjs.org/package/get-all-files-ts">
-    <img src="https://badgen.now.sh/npm/v/get-all-files-ts" alt="version" />
+  <a href="https://npmjs.org/package/@a73/get-all-files-ts">
+    <img src="https://badgen.now.sh/npm/v/@a73/get-all-files-ts" alt="version" />
   </a>
   <a href="https://github.com/area73/get-all-files-ts/actions">
     <img src="https://github.com/area73/get-all-files-ts/workflows/CI/badge.svg" alt="CI" />
   </a>
-  <a href="https://bundlephobia.com/result?p=get-all-files-ts">
-    <img src="https://badgen.net/bundlephobia/minzip/get-all-files-ts" alt="minzip size" />
+  <a href="https://bundlephobia.com/result?p=@a73/get-all-files-ts">
+    <img src="https://badgen.net/bundlephobia/minzip/@a73/get-all-files-ts" alt="minzip size" />
   </a>
 </div>
 
