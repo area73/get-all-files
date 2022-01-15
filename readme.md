@@ -35,6 +35,10 @@
 $ npm i get-all-files-ts
 ```
 
+## Usage
+Please visit documentation at [`get-all-files-ts` github pages](https://area73.github.io/get-all-files-ts/) to see examples of its use.
+
+
 ## Documentation
 This library is using [typedoc](https://typedoc.org/).
 A documentation generator for TypeScript projects, similar to jsDoc but for TypeScript files.
