@@ -229,7 +229,7 @@ function traverse(dirnames: string[], filenames: string[], globalNotifier: Retur
  * @example
  *
  * ```js
- * import { getAllFilesSync } from 'get-all-files'
+ * import { getAllFilesSync } from '@a73/get-all-files'
  *    // Lazily iterate over filenames synchronously
  *    for (const filename of getAllFilesSync(`path/to/dir/or/file`)) {
  *      // Could break early on some condition and get-all-files
@@ -272,7 +272,7 @@ export const getAllFilesSync = (filename: string, options?: OptionsParameters) =
  *
  * @example
  * ```js
- *  import { getAllFiles } from 'get-all-files';
+ *  import { getAllFiles } from '@a73/get-all-files';
  *
  *    // Lazily iterate over filenames asynchronously
  *    for await (const filename of getAllFiles(`path/to/dir/or/file`)) {
