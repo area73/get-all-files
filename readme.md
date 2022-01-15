@@ -9,9 +9,6 @@
   <a href="https://github.com/area73/get-all-files-ts/actions">
     <img src="https://github.com/area73/get-all-files-ts/workflows/CI/badge.svg" alt="CI" />
   </a>
-  <a href="https://bundlephobia.com/result?p=@a73/get-all-files-ts">
-    <img src="https://badgen.net/bundlephobia/minzip/@a73/get-all-files-ts" alt="minzip size" />
-  </a>
 </div>
 
 <div align="center">
@@ -32,7 +29,7 @@
 ## Install
 
 ```sh
-$ npm i get-all-files-ts
+$ npm i @a73/get-all-files-ts
 ```
 
 ## Usage
