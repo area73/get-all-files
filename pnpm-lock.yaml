@@ -10,6 +10,7 @@ specifiers:
   eslint: ^7.32.0
   jest: ^27.4.7
   nodemon: ^2.0.15
+  terser: 5.10.0
   ts-node: ^10.4.0
   typedoc: 0.22.10
   typescript: ^4.5.4
@@ -25,6 +26,7 @@ devDependencies:
   eslint: 7.32.0
   jest: 27.4.7_ts-node@10.4.0
   nodemon: 2.0.15
+  terser: 5.10.0
   ts-node: 10.4.0_faf01e1d5a40372a98081522dcafc186
   typedoc: 0.22.10_typescript@4.5.4
   typescript: 4.5.4
@@ -2404,6 +2406,10 @@ packages:
     engines: {node: '>= 0.8'}
     dependencies:
       delayed-stream: 1.0.0
+    dev: true
+
+  /commander/2.20.3:
+    resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
     dev: true
 
   /commondir/1.0.1:
@@ -5802,6 +5808,21 @@ packages:
     dependencies:
       ansi-escapes: 4.3.2
       supports-hyperlinks: 2.2.0
+    dev: true
+
+  /terser/5.10.0:
+    resolution: {integrity: sha512-AMmF99DMfEDiRJfxfY5jj5wNH/bYO09cniSqhfoyxc8sFoYIgkJy86G04UoZU5VjlpnplVu0K6Tx6E9b5+DlHA==}
+    engines: {node: '>=10'}
+    hasBin: true
+    peerDependencies:
+      acorn: ^8.5.0
+    peerDependenciesMeta:
+      acorn:
+        optional: true
+    dependencies:
+      commander: 2.20.3
+      source-map: 0.7.3
+      source-map-support: 0.5.21
     dev: true
 
   /test-exclude/6.0.0:

@@ -7,14 +7,16 @@
     "url": "http://siete3.com"
   },
   "description": "A TypeScript blazing fast recursive directory crawler with lazy sync and async iterator support, fork from  get-all-files by @TomerAberbach",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "generate:docs": "typedoc",
     "test": "jest",
     "test:watch": "jest --watch",
     "dev": "NODE_OPTIONS='--no-warnings --loader ts-node/esm' nodemon --config nodemon.json src/index.ts",
     "dev:debug": "nodemon --config nodemon.json --inspect-brk src/index.ts",
-    "lint:fix": "xo --fix"
+    "lint:fix": "xo --fix",
+    "build": "tsc --build && pnpm terser ./dist/index.js -c -m --source-map -o ./dist/index.js"
   },
   "type": "module",
   "engines": {
@@ -61,6 +63,7 @@
     "eslint": "^7.32.0",
     "jest": "^27.4.7",
     "nodemon": "^2.0.15",
+    "terser": "5.10.0",
     "ts-node": "^10.4.0",
     "typedoc": "0.22.10",
     "typescript": "^4.5.4",
